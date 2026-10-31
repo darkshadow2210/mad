@@ -1,0 +1,144 @@
+Develop an application that shows names as a list and on selecting a name it should show the details of the candidate on the next screen with a “Back” button.
+
+create a simple two-screen Android app in Java using Android Studio.
+
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/listViewNames"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
+
+
+
+
+
+
+activity_detail.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textViewDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="Details will appear here" />
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_marginTop="24dp" />
+
+</LinearLayout>
+
+
+
+
+
+
+MainActivity.java
+java
+CopyEdit
+package com.example.nameapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+public class MainActivity extends AppCompatActivity {
+
+    ListView listViewNames;
+    String[] names = {"Alice", "Bob", "Charlie", "David"};
+    String[] details = {
+        "Alice - Android Developer from NYC",
+        "Bob - Data Scientist from LA",
+        "Charlie - UX Designer from Chicago",
+        "David - QA Engineer from Seattle"
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        listViewNames = findViewById(R.id.listViewNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, names);
+        listViewNames.setAdapter(adapter);
+
+        listViewNames.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("details", details[position]);
+            startActivity(intent);
+        });
+    }
+}
+
+DetailActivity.java
+java
+CopyEdit
+package com.example.nameapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class DetailActivity extends AppCompatActivity {
+
+    TextView textViewDetails;
+    Button buttonBack;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_detail);
+
+        textViewDetails = findViewById(R.id.textViewDetails);
+        buttonBack = findViewById(R.id.buttonBack);
+
+        // Get passed details from Intent
+        String detail = getIntent().getStringExtra("details");
+        textViewDetails.setText(detail);
+
+        buttonBack.setOnClickListener(v -> finish()); // Go back to previous screen
+    }
+}
+
+AndroidManifest.xml
+xml
+CopyEdit
+<application
+    ... >
+    
+    <activity android:name=".DetailActivity" />
+    <activity android:name=".MainActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+</application>
+
+
+
